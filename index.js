@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -30,10 +30,18 @@ async function run() {
 
     const roomsCollection = client.db('SuiteVoyageDB').collection('roomsCollection');
 
-    app.get('/rooms', async(req,res) =>{
-        const cursor = roomsCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
+    app.get('/rooms', async (req, res) => {
+      const cursor = roomsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+
+    app.get('/rooms/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await roomsCollection.findOne(query)
+      res.send(result)
     })
 
 
@@ -49,11 +57,11 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req,res)=>{
-    res.send('SuiteVoyage Server Running');
+app.get('/', (req, res) => {
+  res.send('SuiteVoyage Server Running');
 })
 
 
-app.listen(port, ()=>{
-    console.log(`Server is running on port: ${port}`)
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`)
 })
