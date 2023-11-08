@@ -30,18 +30,18 @@ async function run() {
 
     const roomsCollection = client.db('SuiteVoyageDB').collection('roomsCollection');
     const bookingsCollection = client.db('SuiteVoyageDB').collection('bookingsCollection');
-    
+
     //rooms section
-    app.get('/rooms', async(req,res) =>{
-        const cursor = roomsCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
+    app.get('/rooms', async (req, res) => {
+      const cursor = roomsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
     })
 
 
-    app.get('/rooms/:id', async(req,res) =>{
+    app.get('/rooms/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id : new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await roomsCollection.findOne(query)
       res.send(result)
     })
@@ -49,22 +49,30 @@ async function run() {
 
     //bookings section
 
-    app.post('/bookings', async(req,res)=>{
+    app.post('/bookings', async (req, res) => {
       const booking = req.body
       const result = await bookingsCollection.insertOne(booking)
       res.send(result)
     });
 
-    app.get('/bookings', async(req,res) =>{
+
+    app.get('/bookings', async (req, res) => {
       console.log(req.query.email)
-      let query ={};
-      if(req.query?.email){
-        query = {email: req.query.email}
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email }
       }
-      const cursor = bookingsCollection.find(query);
+      const cursor = await bookingsCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
-  })
+    })
+
+    app.delete('/bookings/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await bookingsCollection.deleteOne(query);
+      res.send(result);
+    })
 
 
 
@@ -81,11 +89,11 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req,res)=>{
-    res.send('SuiteVoyage Server Running');
+app.get('/', (req, res) => {
+  res.send('SuiteVoyage Server Running');
 })
 
 
-app.listen(port, ()=>{
-    console.log(`Server is running on port: ${port}`)
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`)
 })
