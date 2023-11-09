@@ -67,6 +67,35 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/bookings/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await bookingsCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.patch('/bookings/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updated = req.body;
+     console.log(updated)
+      const updateDoc = {
+          $set: {
+            RoomId: updated.RoomId,
+            date: updated.date,
+            Type: updated.Type,
+             Number: updated.Number,
+              Price: updated.Price, 
+              Name: updated.Name, 
+              email:updated.email,
+              Image: updated.email
+          },
+      };
+      const result = await bookingsCollection.updateOne(filter, updateDoc);
+      res.send(result);
+  })
+
+
     app.delete('/bookings/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
