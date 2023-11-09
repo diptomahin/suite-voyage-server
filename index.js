@@ -30,6 +30,7 @@ async function run() {
 
     const roomsCollection = client.db('SuiteVoyageDB').collection('roomsCollection');
     const bookingsCollection = client.db('SuiteVoyageDB').collection('bookingsCollection');
+    const reviewCollection = client.db('SuiteVoyageDB').collection('reviewCollection');
 
     //rooms section
     app.get('/rooms', async (req, res) => {
@@ -102,7 +103,20 @@ async function run() {
       const result = await bookingsCollection.deleteOne(query);
       res.send(result);
     })
+  
+  //review 
 
+  app.post('/review', async (req, res) => {
+    const booking = req.body
+    const result = await reviewCollection.insertOne(booking)
+    res.send(result)
+  });
+
+  app.get('/review', async (req, res) => {
+    const cursor = reviewCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+  })
 
 
 
